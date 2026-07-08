@@ -1,0 +1,142 @@
+{
+  "downloaded": [
+    {
+      "exercise": "bench",
+      "file": "validation-videos/bench_press/genai_mvs_bench_press_1.mp4",
+      "source": "https://huggingface.co/datasets/AvihaiNaam/GenAI-MVS",
+      "source_path": "bench_press/train/1.mp4",
+      "license": "CC-BY-4.0",
+      "notes": "AI-generated bench press clip for repeatable smoke testing."
+    },
+    {
+      "exercise": "deadlift",
+      "file": "validation-videos/deadlift/genai_mvs_deadlift_15.mp4",
+      "source": "https://huggingface.co/datasets/AvihaiNaam/GenAI-MVS",
+      "source_path": "deadlift/train/15.mp4",
+      "license": "CC-BY-4.0",
+      "notes": "AI-generated deadlift clip for repeatable smoke testing."
+    }
+  ],
+  "online_candidates": [
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "squat",
+      "label": "squat",
+      "youtube_id": "2gy0I3ND5Jc",
+      "url": "https://www.youtube.com/watch?v=2gy0I3ND5Jc",
+      "start_seconds": 24,
+      "end_seconds": 34,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "squat",
+      "label": "squat",
+      "youtube_id": "QpV1gJZmgDE",
+      "url": "https://www.youtube.com/watch?v=QpV1gJZmgDE",
+      "start_seconds": 16,
+      "end_seconds": 26,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "squat",
+      "label": "squat",
+      "youtube_id": "QCAtQwaXq2Q",
+      "url": "https://www.youtube.com/watch?v=QCAtQwaXq2Q",
+      "start_seconds": 43,
+      "end_seconds": 53,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "deadlift",
+      "label": "deadlifting",
+      "youtube_id": "U1DE1x8XjvI",
+      "url": "https://www.youtube.com/watch?v=U1DE1x8XjvI",
+      "start_seconds": 1,
+      "end_seconds": 11,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "deadlift",
+      "label": "deadlifting",
+      "youtube_id": "LAZPJF4De9U",
+      "url": "https://www.youtube.com/watch?v=LAZPJF4De9U",
+      "start_seconds": 27,
+      "end_seconds": 37,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "deadlift",
+      "label": "deadlifting",
+      "youtube_id": "77hwfx_-zYQ",
+      "url": "https://www.youtube.com/watch?v=77hwfx_-zYQ",
+      "start_seconds": 94,
+      "end_seconds": 104,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "bench",
+      "label": "bench pressing",
+      "youtube_id": "wJdjTwkbNtA",
+      "url": "https://www.youtube.com/watch?v=wJdjTwkbNtA",
+      "start_seconds": 2,
+      "end_seconds": 12,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "bench",
+      "label": "bench pressing",
+      "youtube_id": "JLbAce56NI0",
+      "url": "https://www.youtube.com/watch?v=JLbAce56NI0",
+      "start_seconds": 173,
+      "end_seconds": 183,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    },
+    {
+      "dataset": "Kinetics 700 2020",
+      "dataset_url": "https://github.com/cvdfoundation/kinetics-dataset",
+      "exercise": "bench",
+      "label": "bench pressing",
+      "youtube_id": "MCpaVd9pK-c",
+      "url": "https://www.youtube.com/watch?v=MCpaVd9pK-c",
+      "start_seconds": 3,
+      "end_seconds": 13,
+      "split": "train",
+      "usage_notes": "Review availability, rights, camera angle, and landmark visibility before using."
+    }
+  ],
+  "larger_sources": [
+    {
+      "name": "MM-Fit",
+      "url": "https://mmfit.github.io/",
+      "notes": "Real human exercise recordings with time-synchronized sensor data. Strong candidate for squat calibration, but large downloads should be pulled selectively."
+    },
+    {
+      "name": "InfiniteRep",
+      "url": "https://papersgraph.com/datasets/infiniterep",
+      "notes": "Synthetic exercise clips with camera variation. Useful for broad stress testing but not final human threshold calibration."
+    }
+  ]
+}
