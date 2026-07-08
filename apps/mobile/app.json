@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "FitForm",
+    "slug": "fitform",
+    "scheme": "fitform",
+    "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#07100D"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.fitform.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "FitForm uses the camera to record workout sets you choose to analyze for exercise form feedback.",
+        "NSMicrophoneUsageDescription": "FitForm records microphone audio only when you record a workout video in the app.",
+        "NSPhotoLibraryUsageDescription": "FitForm lets you select workout videos from your library so they can be uploaded for form analysis."
+      }
+    },
+    "android": {
+      "package": "com.fitform.app",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_MEDIA_VIDEO",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "plugins": [
+      "react-native-vision-camera",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "FitForm uses the camera to record exercise videos for form analysis.",
+          "microphonePermission": "FitForm uses the microphone while recording workout videos."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6780ac48-8c79-4b36-af41-c1e317e2f753"
+      }
+    },
+    "owner": "sourya_prabaharan"
+  }
+}

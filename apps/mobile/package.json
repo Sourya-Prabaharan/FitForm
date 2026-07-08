@@ -1,0 +1,46 @@
+{
+  "name": "fitform-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
+    "expo": "~53.0.27",
+    "expo-camera": "~16.1.11",
+    "expo-document-picker": "~13.1.6",
+    "expo-font": "~13.3.2",
+    "expo-linear-gradient": "~14.1.5",
+    "expo-splash-screen": "^0.30.10",
+    "expo-status-bar": "~2.2.3",
+    "nativewind": "^4.1.23",
+    "react": "^19.0.0",
+    "react-native": "^0.79.6",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-reanimated": "~3.17.4",
+    "react-native-safe-area-context": "^5.4.0",
+    "react-native-screens": "~4.11.1",
+    "react-native-svg": "^15.11.2",
+    "react-native-vision-camera": "^4.5.3",
+    "zustand": "^4.5.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@types/react": "~19.0.10",
+    "typescript": "~5.8.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  }
+}

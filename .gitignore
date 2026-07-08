@@ -1,0 +1,29 @@
+.DS_Store
+
+# Local environment
+.env
+backend/.env
+apps/mobile/.env
+
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
+
+# Node / Expo
+node_modules/
+.npm-cache/
+.expo/
+.expo-home/
+
+# Generated local media
+backend/test_synthetic.mp4
+validation-videos/**/*.mp4
+validation-videos/**/*.mov
+validation-videos/**/*.m4v
+validation-videos/**/*.avi
+validation-videos/**/*.webm
+validation-videos/kinetics_700_train.csv
+validation-videos/calibration-report.json
+validation-videos/downloaded_manifest.json
