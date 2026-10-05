@@ -1,0 +1,6 @@
+{$FITFORM_DOMAIN} {
+    request_body {
+        max_size 251MB
+    }
+    reverse_proxy api:8000
+}

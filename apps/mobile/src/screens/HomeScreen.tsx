@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Button } from "@/components/Button";
 import { MetricCard } from "@/components/MetricCard";
@@ -18,18 +18,23 @@ export function HomeScreen() {
   const [selected, setSelected] = useState<ExerciseType>("squat");
   const [progress, setProgress] = useState({ averageScore: 0, sessions: 0, bestLift: "Squat", trend: [] as Array<{ label: string; score: number }> });
 
-  useEffect(() => {
-    api.getProgress().then(setProgress).catch(() => undefined);
-  }, []);
+  const [error, setError] = useState(false);
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    api.getProgress().then((value) => { if (active) { setProgress(value); setError(false); } })
+      .catch(() => { if (active) setError(true); });
+    return () => { active = false; };
+  }, []));
 
   return (
     <Screen className="pt-3">
       <Text className="text-sm font-semibold text-muted">Good session, {user?.fullName?.split(" ")[0] ?? "athlete"}</Text>
       <Text className="mt-2 text-4xl font-black text-white">Analyze your next set.</Text>
       <View className="mt-6 flex-row gap-3">
-        <MetricCard label="Avg score" value={progress.averageScore ? `${progress.averageScore}` : "88"} />
-        <MetricCard label="Sessions" value={`${progress.sessions || 12}`} tone="gold" />
+        <MetricCard label="Avg score" value={progress.sessions ? `${progress.averageScore}` : "--"} />
+        <MetricCard label="Sessions" value={`${progress.sessions}`} tone="gold" />
       </View>
+      {error ? <Text className="mt-3 text-coral">Progress unavailable. Check your connection.</Text> : null}
       <Text className="mb-3 mt-8 text-lg font-black text-white">Choose exercise</Text>
       <View className="gap-3">
         {exercises.map((exercise) => (
@@ -52,12 +57,13 @@ export function HomeScreen() {
         <Button title="Record or upload video" icon={<Ionicons name="camera" size={20} color="#07100D" />} onPress={() => navigation.navigate("Capture", { exercise: selected })} />
       </View>
       <View className="mt-8 rounded-[8px] border border-[#1D332B] bg-panel2 p-4">
-        <Text className="text-lg font-black text-white">Weekly progress</Text>
+        <Text className="text-lg font-black text-white">Recent progress</Text>
+        {!progress.trend.length ? <Text className="mt-3 text-muted">Your completed sets will appear here.</Text> : null}
         <View className="mt-4 h-24 flex-row items-end gap-2">
-          {["M", "T", "W", "T", "F", "S", "S"].map((label, index) => (
-            <View key={`${label}-${index}`} className="flex-1 items-center">
-              <View className="w-full rounded-t-[6px] bg-mint" style={{ height: 24 + index * 8 }} />
-              <Text className="mt-2 text-xs text-muted">{label}</Text>
+          {progress.trend.map((item, index) => (
+            <View key={`${item.label}-${index}`} className="flex-1 items-center">
+              <View className="w-full rounded-t-[6px] bg-mint" style={{ height: Math.max(2, item.score * 0.6) }} />
+              <Text className="mt-2 text-xs text-muted">{item.label}</Text>
             </View>
           ))}
         </View>

@@ -42,6 +42,7 @@ class Analysis(Base):
     joint_angles: Mapped[list] = mapped_column(JSON, default=list)
     movement_path: Mapped[list] = mapped_column(JSON, default=list)
     set_analysis: Mapped[dict | None] = mapped_column(JSON)
+    pose_frames: Mapped[list] = mapped_column(JSON, default=list)
     error: Mapped[str | None] = mapped_column(String(1000))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
     updated_at: Mapped[datetime] = mapped_column(

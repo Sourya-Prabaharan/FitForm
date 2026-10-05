@@ -1,11 +1,28 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, Text, View } from "react-native";
+import { Alert, Linking, Pressable, Text, View } from "react-native";
+import { useState } from "react";
+import { api } from "@/services/api";
 import { Button } from "@/components/Button";
 import { Screen } from "@/components/Screen";
 import { useAuthStore } from "@/store/authStore";
 
 export function ProfileScreen() {
   const { user, logout } = useAuthStore();
+  const [deleting, setDeleting] = useState(false);
+  function deleteAccount() {
+    Alert.alert("Delete account?", "Your account, uploaded videos and analyses will be permanently deleted.", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete account", style: "destructive", onPress: () => {
+        setDeleting(true);
+        void api.deleteAccount().then(logout).catch((error: Error) => Alert.alert("Unable to delete", error.message))
+          .finally(() => setDeleting(false));
+      } }
+    ]);
+  }
+  const links = [
+    { label: "Privacy policy", url: process.env.EXPO_PUBLIC_PRIVACY_URL },
+    { label: "Terms of service", url: process.env.EXPO_PUBLIC_TERMS_URL }
+  ].filter((item): item is { label: string; url: string } => Boolean(item.url));
   return (
     <Screen className="pt-3">
       <Text className="text-4xl font-black text-white">Profile</Text>
@@ -17,9 +34,9 @@ export function ProfileScreen() {
         <Text className="mt-1 text-muted">{user?.email}</Text>
       </View>
       <View className="mt-6 gap-3">
-        {["Dark mode", "Camera calibration", "Privacy controls", "Export data", "Terms and privacy"].map((item) => (
-          <Pressable key={item} className="flex-row items-center justify-between rounded-[8px] bg-panel2 p-4">
-            <Text className="text-base font-semibold text-white">{item}</Text>
+        {links.map((item) => (
+          <Pressable key={item.label} onPress={() => void Linking.openURL(item.url).catch(() => Alert.alert("Link unavailable", "Please try again later."))} className="flex-row items-center justify-between rounded-[8px] bg-panel2 p-4">
+            <Text className="text-base font-semibold text-white">{item.label}</Text>
             <Ionicons name="chevron-forward" size={20} color="#8EA09A" />
           </Pressable>
         ))}
@@ -30,6 +47,7 @@ export function ProfileScreen() {
       </Text>
       <View className="mt-8">
         <Button title="Log out" variant="secondary" onPress={() => void logout()} />
+        <Button title="Delete account" variant="ghost" loading={deleting} onPress={deleteAccount} />
       </View>
     </Screen>
   );

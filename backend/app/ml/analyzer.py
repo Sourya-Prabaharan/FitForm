@@ -5,5 +5,8 @@ from app.models.analysis import ExerciseType
 
 
 def analyze_video(video_path: str, exercise: ExerciseType) -> AnalysisComputation:
-    frames, fps = PoseExtractor().extract(video_path)
-    return score(frames, fps, exercise)
+    extractor = PoseExtractor()
+    frames, fps = extractor.extract(video_path)
+    result = score(frames, fps, exercise)
+    result.pose_frames = extractor.overlay_frames
+    return result

@@ -112,12 +112,13 @@ Set these in your deployment environment:
 - `CORS_ORIGINS`
 - `AWS_REGION`
 - `S3_BUCKET`
+- `S3_ENDPOINT_URL`
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `TRUSTED_HOSTS`
 - `MAX_UPLOAD_MB`
 
-In production, use managed PostgreSQL, managed Redis, private S3 buckets with lifecycle policies, HTTPS-only API access, and a transactional email provider for password reset tokens.
+In production, use managed PostgreSQL, managed Redis, private S3-compatible object storage with lifecycle policies, HTTPS-only API access, and a transactional email provider for password reset tokens. Cloudflare R2 is the recommended no/low-cost object storage option for TestFlight because it is S3-compatible.
 
 Detailed production, TestFlight, privacy, and store-submission materials are in:
 
@@ -169,3 +170,11 @@ Detailed production, TestFlight, privacy, and store-submission materials are in:
 - Add model registry for PyTorch exercise classifiers.
 - Add coach/team accounts and shared athlete libraries.
 - Add signed reset-password flow and email delivery.
+# Release verification
+
+See [self-hosted deployment](docs/SELF_HOST_DEPLOYMENT.md) for the deployment path
+that does not require S3/R2 or paid Render services, and
+[release verification](docs/RELEASE_VERIFICATION.md) for checks and remaining gates.
+Production mobile builds require real HTTPS API, privacy and terms URLs in EAS.
+The backend serves privacy and terms at `/privacy` and `/terms`; review these with
+your real operator contact and backup retention before launch.

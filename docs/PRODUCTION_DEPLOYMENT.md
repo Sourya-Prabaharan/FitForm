@@ -2,6 +2,8 @@
 
 ## Backend
 
+This repo includes a Render Blueprint at `render.yaml` for a fast TestFlight staging deployment. Render's current Blueprint format uses `runtime: docker` for Docker services and `type: keyvalue` for Redis-compatible storage.
+
 Required production environment:
 
 - `ENVIRONMENT=production`
@@ -10,19 +12,47 @@ Required production environment:
 - `JWT_SECRET`: unique random secret, at least 32 characters.
 - `CORS_ORIGINS`: exact allowed app/web origins, never `*`.
 - `TRUSTED_HOSTS`: exact API hostnames.
-- `AWS_REGION`
+- `AWS_REGION`: use `auto` for Cloudflare R2.
 - `S3_BUCKET`: private production bucket.
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
+- `S3_ENDPOINT_URL`: S3-compatible endpoint. Recommended for TestFlight: Cloudflare R2.
+- `AWS_ACCESS_KEY_ID`: R2 or S3-compatible access key.
+- `AWS_SECRET_ACCESS_KEY`: R2 or S3-compatible secret key.
 - `MAX_UPLOAD_MB`
+
+For the Render Blueprint, enter the same `JWT_SECRET` value for both `fitform-api` and `fitform-worker` when Render prompts for synced secrets. Generate one with:
+
+```bash
+openssl rand -hex 32
+```
+
+After Render creates the API service, update these values if the generated host differs from `fitform-api.onrender.com`:
+
+- `TRUSTED_HOSTS`
+- mobile `EXPO_PUBLIC_API_URL`
 
 ## Cloud Storage
 
-- Private S3 bucket.
+Recommended no/low-cost TestFlight option: Cloudflare R2.
+
+Why R2:
+
+- S3-compatible API, so the backend code stays simple.
+- No egress fees on standard storage.
+- Current free tier includes 10 GB-month of standard storage, 1 million Class A operations, and 10 million Class B operations per month.
+
+Alternatives:
+
+- Backblaze B2: also S3-compatible and currently lists 10 GB free storage, but set caps/alerts to avoid surprise usage.
+- Supabase Storage: easier dashboard, but the free plan has a 1 GB quota and 50 MB max file size, which is tight for workout videos.
+- Firebase Storage: no-payment Spark plan can be useful for prototypes, but it is a bigger backend rewrite than R2.
+
+Production storage checklist:
+
+- Private object bucket.
 - Block public access enabled.
 - Server-side encryption enabled.
 - Lifecycle rules for temporary uploads and old source videos.
-- Least-privilege IAM role limited to the production bucket.
+- Least-privilege API credentials limited to the production bucket.
 - Signed URLs for any future user-facing video playback.
 
 ## API Edge
@@ -61,4 +91,3 @@ Do not submit for public App Review until:
 - Privacy policy and terms are hosted at final URLs.
 - App Privacy answers match actual SDKs and production services.
 - Real human calibration videos have been reviewed.
-

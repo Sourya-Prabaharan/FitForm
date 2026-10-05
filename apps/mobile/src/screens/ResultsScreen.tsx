@@ -8,6 +8,8 @@ import { Screen } from "@/components/Screen";
 import { AppStackParamList } from "@/navigation/types";
 import { useAnalysisStore } from "@/store/analysisStore";
 import { FitScoreBreakdown, RepAnalysis } from "@/types";
+import { AnalysisVideo } from "@/components/AnalysisVideo";
+import { JointAngleChart } from "@/components/JointAngleChart";
 
 type Props = NativeStackScreenProps<AppStackParamList, "Results">;
 
@@ -76,8 +78,19 @@ export function ResultsScreen({ navigation, route }: Props) {
   }
 
   const setAnalysis = analysis.setAnalysis;
+  if (analysis.status === "failed") {
+    return <Screen className="pt-8">
+      <Text className="text-2xl font-black text-white">Analysis could not finish</Text>
+      <Text className="my-5 text-base text-muted">{analysis.error ?? "Use a clear clip under two minutes with your full body visible."}</Text>
+      <Button title="Try another video" onPress={() => navigation.replace("Capture", { exercise: analysis.exercise })} />
+    </Screen>;
+  }
   const currentFitScore = setAnalysis?.averageFitScore ?? analysis.score;
-  const bestRep = setAnalysis?.reps.find((rep) => rep.repIndex === setAnalysis.bestRepIndex) ?? setAnalysis?.reps[0];
+  const reps = setAnalysis?.reps ?? [];
+  const breakdown = reps.length ? Object.fromEntries(
+    (["stability", "symmetry", "rangeOfMotion", "tempoControl", "posture", "overall"] as const)
+      .map((key) => [key, reps.reduce((sum, rep) => sum + rep.fitScore[key], 0) / reps.length])
+  ) as FitScoreBreakdown : null;
 
   return (
     <Screen className="pt-2">
@@ -89,16 +102,17 @@ export function ResultsScreen({ navigation, route }: Props) {
       <Text className="mt-3 text-base leading-6 text-muted">{analysis.summary}</Text>
       <View className="mt-4 rounded-[8px] border border-[#26483C] bg-panel2 p-3">
         <Text className="text-xs leading-5 text-muted">
-          Review this as fitness guidance only. Stop if you feel pain and consult a qualified professional for medical
-          concerns, injury risk, or personalized programming.
+          FitScore is a rule-based estimate, not a validated assessment of safe technique. Camera angle and
+          tracking affect results. Stop if you feel pain and consult a qualified professional.
         </Text>
       </View>
       <View className="mt-6 flex-row gap-3">
-        <MetricCard label="Confidence" value={`${Math.round(analysis.confidence * 100)}%`} />
+        <MetricCard label="Pose visibility" value={`${Math.round(analysis.confidence * 100)}%`} />
         <MetricCard label="Reps" value={`${analysis.repCount}`} tone="gold" />
         <MetricCard label="Stability" value={`${analysis.stabilityScore}`} tone={analysis.stabilityScore > 80 ? "mint" : "coral"} />
       </View>
-      {bestRep ? <FitScoreBreakdownCard fitScore={bestRep.fitScore} /> : null}
+      {analysis.videoUrl ? <AnalysisVideo analysis={analysis} /> : null}
+      {breakdown ? <FitScoreBreakdownCard fitScore={breakdown} /> : null}
       {setAnalysis ? (
         <>
           <Text className="mb-3 mt-8 text-lg font-black text-white">Rep quality</Text>
@@ -111,7 +125,7 @@ export function ResultsScreen({ navigation, route }: Props) {
           <View className="rounded-[8px] border border-[#1D332B] bg-panel2 p-4">
             <View className="flex-row items-center justify-between">
               <Text className="text-base font-black text-white">
-                {setAnalysis.fatigue.fatigueDetected ? "Fatigue detected" : "No clear fatigue pattern"}
+                {setAnalysis.fatigue.fatigueDetected ? "Possible fatigue" : "No clear fatigue pattern"}
               </Text>
               <Text className={`text-2xl font-black ${scoreTone(100 - setAnalysis.fatigue.fatigueScore)}`}>
                 {Math.round(setAnalysis.fatigue.fatigueScore)}
@@ -120,7 +134,7 @@ export function ResultsScreen({ navigation, route }: Props) {
             <Text className="mt-3 text-sm leading-5 text-muted">{setAnalysis.fatigue.summary}</Text>
             {setAnalysis.fatigue.fatigueOnsetRep ? (
               <Text className="mt-3 text-sm font-semibold text-gold">
-                Form breakdown started around rep {setAnalysis.fatigue.fatigueOnsetRep}.
+                Estimated quality first declined around rep {setAnalysis.fatigue.fatigueOnsetRep}.
               </Text>
             ) : null}
             <View className="mt-4 flex-row gap-3">
@@ -132,7 +146,9 @@ export function ResultsScreen({ navigation, route }: Props) {
       ) : null}
       <Text className="mb-3 mt-8 text-lg font-black text-white">Movement path</Text>
       <PoseChart points={analysis.movementPath} />
-      <Text className="mb-3 mt-8 text-lg font-black text-white">Detected mistakes</Text>
+      <Text className="mb-3 mt-8 text-lg font-black text-white">Joint angles</Text>
+      <JointAngleChart series={analysis.jointAngles} />
+      <Text className="mb-3 mt-8 text-lg font-black text-white">Potential issues</Text>
       <View className="gap-3">
         {analysis.mistakes.map((mistake) => (
           <View key={mistake.code} className="rounded-[8px] border border-[#1D332B] bg-panel2 p-4">
@@ -140,7 +156,7 @@ export function ResultsScreen({ navigation, route }: Props) {
               <Text className="text-base font-black text-white">{mistake.label}</Text>
               <Ionicons name={mistake.severity === "high" ? "alert-circle" : "information-circle"} size={22} color={mistake.severity === "high" ? "#FF7A66" : "#FFD166"} />
             </View>
-            <Text className="mt-2 text-sm text-muted">Frame {mistake.firstFrame} • {Math.round(mistake.confidence * 100)}% confidence</Text>
+            <Text className="mt-2 text-sm text-muted">Sampled frame {mistake.firstFrame}</Text>
             {mistake.evidence ? <Text className="mt-2 text-sm leading-5 text-white">{mistake.evidence}</Text> : null}
             {mistake.reference ? <Text className="mt-2 text-xs font-semibold text-mint">{mistake.reference}</Text> : null}
           </View>

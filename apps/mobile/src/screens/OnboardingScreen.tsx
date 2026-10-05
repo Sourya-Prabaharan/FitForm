@@ -9,7 +9,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, "Onboarding">;
 
 export function OnboardingScreen({ navigation }: Props) {
   return (
-    <Screen scroll={false} className="flex-1 justify-between py-6">
+    <Screen className="py-6">
       <View>
         <Text className="text-sm font-bold uppercase tracking-[2px] text-mint">FitForm</Text>
         <Text className="mt-8 text-5xl font-black leading-[56px] text-white">Lift smarter with AI form coaching.</Text>
@@ -25,7 +25,7 @@ export function OnboardingScreen({ navigation }: Props) {
             <View className="absolute left-24 top-20 h-32 w-1 -rotate-45 rounded-full bg-lime" />
             <View className="absolute right-16 top-14 h-44 w-1 rotate-45 rounded-full bg-gold" />
             <View className="rounded-[8px] bg-[#13251F] p-4">
-              <Text className="text-sm text-muted">Latest analysis</Text>
+              <Text className="text-sm text-muted">Example analysis</Text>
               <Text className="mt-1 text-3xl font-black text-mint">91</Text>
               <Text className="mt-1 text-sm text-white">Strong depth. Slight knee drift on rep 4.</Text>
             </View>

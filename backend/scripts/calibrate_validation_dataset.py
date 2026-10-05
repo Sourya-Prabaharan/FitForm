@@ -87,7 +87,7 @@ def main() -> None:
                 }
             )
         except Exception as exc:
-            reports.append({"file": relative, "exercise": exercise, "status": "failed", "error": str(exc)})
+            reports.append({"file": relative, "exercise": exercise, "expected": label, "status": "failed", "error": str(exc)})
 
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)

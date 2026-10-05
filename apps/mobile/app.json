@@ -42,7 +42,9 @@
           "cameraPermission": "FitForm uses the camera to record exercise videos for form analysis.",
           "microphonePermission": "FitForm uses the microphone while recording workout videos."
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-video"
     ],
     "extra": {
       "eas": {

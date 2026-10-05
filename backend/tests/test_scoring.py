@@ -21,6 +21,7 @@ def frame(knee_y: float, knee_x_scale: float = 1.0) -> dict[str, Point]:
 
 def test_squat_flags_knee_valgus() -> None:
     frames = [frame(0.62), frame(0.7, knee_x_scale=0.2), frame(0.62), frame(0.58), frame(0.55)] * 3
+    frames = [pose for pose in frames for _ in range(10)]
     result = score(frames, 30, "squat")
     assert any(mistake.code == "knees_caving" for mistake in result.mistakes)
     assert result.rep_count >= 1

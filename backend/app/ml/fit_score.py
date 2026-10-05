@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from statistics import mean
+import math
 from typing import TYPE_CHECKING, Any
 
 from app.ml.geometry import angle, midpoint
 from app.ml.schemas import FatigueAnalysis, FitScoreBreakdown, RepAnalysis, SetAnalysis
+from app.ml.validation import valid_frames
 
 if TYPE_CHECKING:
     from app.ml.pose import LandmarkFrame
@@ -48,13 +50,12 @@ def _frame_point(frames: list[LandmarkFrame], frame_index: int, exercise: str):
 def _path_instability(frames: list[LandmarkFrame], start: int, end: int, exercise: str) -> float:
     if end - start < 2:
         return 0
-    distances: list[float] = []
-    previous = _frame_point(frames, start, exercise)
-    for frame_index in range(start + 1, end + 1):
-        current = _frame_point(frames, frame_index, exercise)
-        distances.append(((current.x - previous.x) ** 2 + (current.y - previous.y) ** 2) ** 0.5)
-        previous = current
-    return _avg(distances)
+    points = [_frame_point(frames, index, exercise) for index in range(start, end + 1)]
+    smooth_x = _moving_average([point.x for point in points])
+    smooth_y = _moving_average([point.y for point in points])
+    # Residual wobble around a smooth trajectory, not total intentional movement.
+    return _avg([((p.x - x) ** 2 + (p.y - y) ** 2) ** 0.5
+                 for p, x, y in zip(points[2:-2], smooth_x[2:-2], smooth_y[2:-2])])
 
 
 def _spine_angles(frames: list[LandmarkFrame]) -> list[float]:
@@ -100,12 +101,14 @@ def _exercise_series(frames: list[LandmarkFrame], exercise: str) -> dict[str, li
     }
 
 
-def _rep_segments(values: list[float], exercise: str) -> list[tuple[int, int]]:
+def _rep_segments(values: list[float], exercise: str, fps: float = 15) -> list[tuple[int, int]]:
     if len(values) < 5:
-        return [(0, max(0, len(values) - 1))]
+        return []
 
     low = min(values)
     high = max(values)
+    if high - low < 12:
+        return []
     travel = max(1, high - low)
     bottom_threshold = low + travel * 0.38
     top_threshold = low + travel * 0.72
@@ -113,23 +116,19 @@ def _rep_segments(values: list[float], exercise: str) -> list[tuple[int, int]]:
     segments: list[tuple[int, int]] = []
     start = 0
     saw_bottom = False
-    bottom_index = 0
-    min_gap = max(4, len(values) // 30)
+    # A fixed time threshold must not grow when another set or idle time is appended.
+    min_gap = max(2, math.ceil(fps * 0.4))
 
     for index, value in enumerate(values):
         if value <= bottom_threshold:
-            if not saw_bottom:
-                bottom_index = index
-            elif value < values[bottom_index]:
-                bottom_index = index
             saw_bottom = True
-        if saw_bottom and value >= top_threshold and index - start >= min_gap:
-            segments.append((start, index))
+        if value >= top_threshold:
+            if saw_bottom and index - start >= min_gap:
+                segments.append((start, index))
+            # Discard implausibly brief cycles and keep idle time out of rep duration.
             start = index
             saw_bottom = False
 
-    if not segments:
-        return [(0, len(values) - 1)]
     return segments
 
 
@@ -163,14 +162,15 @@ def _range_score(values: list[float], start: int, end: int, exercise: str) -> tu
 
 def _posture_score(series: dict[str, list[float]], start: int, end: int, exercise: str) -> float:
     spine = series["spine"][start : end + 1]
-    knee = series["knee"][start : end + 1]
     if exercise == "squat":
         torso_drift = max(spine, default=0) - min(spine, default=0)
-        depth_penalty = max(0, 100 - _range_score(knee, start, end, exercise)[0]) * 0.35
+        depth_penalty = max(0, 100 - _range_score(series["knee"], start, end, exercise)[0]) * 0.35
         return round(_clamp(100 - torso_drift * 1.6 - depth_penalty), 1)
     if exercise == "deadlift":
-        spine_drift = max(spine, default=0) - min(spine, default=0)
-        return round(_clamp(100 - spine_drift * 1.8), 1)
+        # The hip angle changes normally during a hinge; it cannot measure spinal curvature.
+        changes = [b - a for a, b in zip(spine, spine[1:])]
+        angular_jitter = _avg([abs(b - a) for a, b in zip(changes, changes[1:])])
+        return round(_clamp(100 - angular_jitter * 4), 1)
     shoulder_delta = [
         abs(frame["left_shoulder"].y - frame["right_shoulder"].y)
         for frame in series.get("frames", [])[start : end + 1]
@@ -179,7 +179,9 @@ def _posture_score(series: dict[str, list[float]], start: int, end: int, exercis
 
 
 def analyze_set_quality(frames: list[LandmarkFrame], fps: float, exercise: str) -> SetAnalysis:
-    if not frames:
+    if exercise not in {"squat", "deadlift", "bench"}:
+        raise ValueError("Unsupported exercise")
+    if not valid_frames(frames, fps):
         fatigue = FatigueAnalysis(
             fatigueScore=0,
             fatigueDetected=False,
@@ -194,7 +196,7 @@ def analyze_set_quality(frames: list[LandmarkFrame], fps: float, exercise: str) 
 
     series = _exercise_series(frames, exercise)
     series["frames"] = frames
-    segments = _rep_segments(series["primary"], exercise)
+    segments = _rep_segments(series["primary"], exercise, fps)
     reps: list[RepAnalysis] = []
 
     for rep_number, (start, end) in enumerate(segments, start=1):
@@ -233,8 +235,8 @@ def analyze_set_quality(frames: list[LandmarkFrame], fps: float, exercise: str) 
 
     fit_scores = [rep.fitScore.overall for rep in reps]
     average_fit_score = round(_avg(fit_scores), 1)
-    best_rep = max(reps, key=lambda rep: rep.fitScore.overall).repIndex
-    worst_rep = min(reps, key=lambda rep: rep.fitScore.overall).repIndex
+    best_rep = max(reps, key=lambda rep: rep.fitScore.overall).repIndex if reps else 0
+    worst_rep = min(reps, key=lambda rep: rep.fitScore.overall).repIndex if reps else 0
     fatigue = _fatigue_analysis(reps)
     return SetAnalysis(
         reps=reps,
@@ -281,7 +283,7 @@ def _fatigue_analysis(reps: list[RepAnalysis]) -> FatigueAnalysis:
     if quality_drop_detected:
         summary = f"Movement quality dropped {fit_score_drop}% by the end of the set."
         if fatigue_onset:
-            summary += f" Form breakdown started around rep {fatigue_onset}."
+            summary += f" Estimated quality first declined around rep {fatigue_onset}; fatigue is one possible cause."
         elif rom_drop >= 10 and stability_drop >= 10:
             summary += " Reduced range of motion and increased instability were the main signals."
         elif rom_drop >= 10:

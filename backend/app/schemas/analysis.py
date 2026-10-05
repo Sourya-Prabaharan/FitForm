@@ -29,6 +29,8 @@ class AnalysisOut(BaseModel):
     rep_count: int
     stability_score: int
     summary: str
+    error: str | None = None
+    pose_frames: list[dict] = Field(default_factory=list)
 
 
 class ProgressOut(BaseModel):

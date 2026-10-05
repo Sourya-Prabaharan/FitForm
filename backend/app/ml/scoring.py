@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any
 from app.ml.fit_score import analyze_set_quality
 from app.ml.geometry import angle, midpoint, normalized_variance, slope_degrees
 from app.ml.references import REFERENCE_SUMMARY
+from app.ml.validation import valid_frames
 from app.ml.schemas import AnglePoint, AnalysisComputation, JointAngleSeries, Mistake, MovementPathPoint
 
 if TYPE_CHECKING:
@@ -75,7 +76,7 @@ def _rep_count_by_troughs(values: list[float], bottom_threshold: float, top_thre
         if saw_bottom and value > top_threshold:
             reps += 1
             saw_bottom = False
-    return max(1, reps)
+    return reps
 
 
 def _frame_of_min(values: list[float]) -> int:
@@ -188,17 +189,17 @@ def _deadlift_score(
     ]
     hip_rom = max(hip_angles) - min(hip_angles)
     knee_rom = max(knee_values) - min(knee_values)
-    torso_drift = max(torso_angles) - min(torso_angles)
 
-    if torso_drift > 28:
+    rapid_torso_change = max((abs(b - a) for a, b in zip(torso_angles, torso_angles[1:])), default=0)
+    if rapid_torso_change > 12:
         mistakes.append(
             _mistake(
-                "back_rounding",
-                "Back rounding detected",
+                "torso_motion",
+                "Torso angle varies through the pull",
                 "high",
                 _frame_of_max(torso_angles),
                 0.82,
-                f"Torso-spine proxy drifted {round(torso_drift)} degrees during the pull.",
+                f"Torso angle changed up to {round(rapid_torso_change)} degrees between sampled frames. This does not measure spinal curvature.",
                 "deadlift_spine",
             )
         )
@@ -225,7 +226,7 @@ def _deadlift_score(
         mistakes.append(
             _mistake(
                 "bar_path",
-                "Uneven bar path",
+                "Hip path shifts horizontally",
                 "medium",
                 0,
                 0.72,
@@ -274,7 +275,7 @@ def _bench_score(
         mistakes.append(
             _mistake(
                 "bar_symmetry",
-                "Bar path symmetry issue",
+                "Arm movement asymmetry",
                 "medium",
                 frame,
                 0.77,
@@ -304,7 +305,10 @@ def _bench_score(
 
 
 def score(frames: list[LandmarkFrame], fps: float, exercise: Any) -> AnalysisComputation:
-    if len(frames) < 5:
+    exercise_value = getattr(exercise, "value", exercise)
+    if exercise_value not in {"squat", "deadlift", "bench"}:
+        raise ValueError("Unsupported exercise")
+    if len(frames) < 5 or not valid_frames(frames, fps):
         raise ValueError("Not enough visible body landmarks were detected")
 
     left_knee = _series(frames, fps, "leftKnee", ("left_hip", "left_knee", "left_ankle"))
@@ -319,7 +323,6 @@ def score(frames: list[LandmarkFrame], fps: float, exercise: Any) -> AnalysisCom
     confidence = _visibility_confidence(frames)
     stability = max(45, min(100, round(100 - normalized_variance([point.x for point in hip_path]) * 380)))
 
-    exercise_value = getattr(exercise, "value", exercise)
     if exercise_value == "squat":
         score_delta, mistakes, recommendations, reps = _squat_score(frames, left_knee, right_knee, hip_path, torso_angles)
         path = hip_path
@@ -361,7 +364,7 @@ def score(frames: list[LandmarkFrame], fps: float, exercise: Any) -> AnalysisCom
         score_delta -= 6
 
     if not recommendations:
-        recommendations.append("Keep current loading, repeat the same camera angle next session, and add a small progression.")
+        recommendations.append("No configured rule was triggered. This is not confirmation of safe technique; review the recording with a qualified coach before changing load.")
 
     set_analysis = analyze_set_quality(frames, fps, exercise_value)
     if set_analysis.reps:
@@ -371,12 +374,13 @@ def score(frames: list[LandmarkFrame], fps: float, exercise: Any) -> AnalysisCom
         if set_analysis.fatigue.fatigueDetected:
             recommendations.append(set_analysis.fatigue.summary)
 
-    legacy_score = max(45, min(99, round(92 + score_delta + (stability - 85) * 0.18 + (confidence - 0.75) * 8)))
-    final_score = round(set_analysis.averageFitScore) if set_analysis.reps else legacy_score
+    if not set_analysis.reps:
+        raise ValueError("No complete repetitions detected. Use a clip with a full range of movement.")
+    final_score = round(set_analysis.averageFitScore)
     summary = (
-        "Strong movement quality with research-informed movement checks passing."
+        "Higher estimated movement quality under the configured rules. Camera angle and tracking can affect this score."
         if final_score >= 85
-        else "Technique issues detected from rep quality, joint-angle, path, and symmetry checks."
+        else "Potential technique changes flagged by movement rules. Review the recording; these flags are not a validated coaching assessment."
     )
     return AnalysisComputation(
         score=final_score,

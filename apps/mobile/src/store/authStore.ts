@@ -1,4 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { readSession, writeSession, clearSession } from "@/services/session";
+import { useAnalysisStore } from "./analysisStore";
 import { create } from "zustand";
 import { api } from "@/services/api";
 import { AuthTokens, User } from "@/types";
@@ -15,10 +16,7 @@ type AuthState = {
 };
 
 async function persistTokens(tokens: AuthTokens) {
-  await AsyncStorage.multiSet([
-    ["fitform.accessToken", tokens.accessToken],
-    ["fitform.refreshToken", tokens.refreshToken]
-  ]);
+  await writeSession(tokens);
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -27,7 +25,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   hydrate: async () => {
     try {
-      const token = await AsyncStorage.getItem("fitform.accessToken");
+      const token = (await readSession())?.accessToken;
       if (!token) {
         set({ isHydrating: false, isAuthenticated: false });
         return;
@@ -52,7 +50,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await get().setSession(session.user, session.tokens);
   },
   logout: async () => {
-    await AsyncStorage.multiRemove(["fitform.accessToken", "fitform.refreshToken"]);
+    await clearSession();
+    useAnalysisStore.setState({ analyses: [], activeAnalysis: undefined, isLoading: false });
     set({ user: null, isAuthenticated: false });
   }
 }));

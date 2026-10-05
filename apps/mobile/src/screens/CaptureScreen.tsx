@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as DocumentPicker from "expo-document-picker";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import { Alert, Pressable, Text, View } from "react-native";
 import { Camera, useCameraDevice, useCameraPermission, useMicrophonePermission } from "react-native-vision-camera";
 import { Button } from "@/components/Button";
@@ -19,6 +20,12 @@ export function CaptureScreen({ navigation, route }: Props) {
   const camera = useRef<Camera>(null);
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const focused = useIsFocused();
+  useEffect(() => {
+    if (!isRecording) return;
+    const timer = setTimeout(() => void camera.current?.stopRecording().catch(() => setIsRecording(false)), 120000);
+    return () => clearTimeout(timer);
+  }, [isRecording]);
 
   async function upload(uri: string, name = "workout.mp4", mimeType = "video/mp4") {
     setLoading(true);
@@ -33,10 +40,18 @@ export function CaptureScreen({ navigation, route }: Props) {
   }
 
   async function pickVideo() {
+    try {
     const result = await DocumentPicker.getDocumentAsync({ type: "video/*", copyToCacheDirectory: true });
     if (!result.canceled) {
       const asset = result.assets[0];
+      if (asset.size && asset.size > 250 * 1024 * 1024) {
+        Alert.alert("Video is too large", "Choose a clip under 250 MB and two minutes.");
+        return;
+      }
       await upload(asset.uri, asset.name, asset.mimeType ?? "video/mp4");
+    }
+    } catch {
+      Alert.alert("Unable to open video", "Please select a locally available video and try again.");
     }
   }
 
@@ -78,7 +93,7 @@ export function CaptureScreen({ navigation, route }: Props) {
       </View>
       <View className="flex-1 overflow-hidden rounded-[8px] border border-[#1D332B] bg-panel2">
         {ready ? (
-          <Camera ref={camera} style={{ flex: 1 }} device={device} isActive video audio />
+          <Camera ref={camera} style={{ flex: 1 }} device={device} isActive={focused && !loading} video audio />
         ) : (
           <View className="flex-1 items-center justify-center p-8">
             <Ionicons name="videocam" size={48} color="#8CFFCB" />
@@ -91,10 +106,11 @@ export function CaptureScreen({ navigation, route }: Props) {
         )}
       </View>
       <View className="mt-4 gap-3">
-        <Button title="Upload video" loading={loading} icon={<Ionicons name="cloud-upload" size={20} color="#07100D" />} onPress={pickVideo} />
+        <Button title="Upload video" loading={loading} disabled={isRecording} icon={<Ionicons name="cloud-upload" size={20} color="#07100D" />} onPress={pickVideo} />
         <Button
           title={isRecording ? "Stop recording" : "Record clip"}
           variant="secondary"
+          disabled={!ready || loading}
           onPress={toggleRecording}
           loading={isRecording && loading}
         />

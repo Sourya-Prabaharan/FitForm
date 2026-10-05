@@ -1,0 +1,98 @@
+name: fitform-production
+
+x-backend: &backend
+  image: fitform-backend:${FITFORM_RELEASE:-local}
+  build:
+    context: ./backend
+  env_file: ${FITFORM_ENV_FILE:-.env.deploy}
+  restart: unless-stopped
+  volumes:
+    - videos:/var/lib/fitform/videos
+  environment:
+    ENVIRONMENT: production
+    DATABASE_URL: postgresql+psycopg://fitform:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@postgres:5432/fitform
+    REDIS_URL: redis://redis:6379/0
+    STORAGE_BACKEND: local
+    LOCAL_STORAGE_PATH: /var/lib/fitform/videos
+    TRUSTED_HOSTS: '["${FITFORM_DOMAIN:?Set FITFORM_DOMAIN}","localhost","127.0.0.1"]'
+    CORS_ORIGINS: '[]'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fitform
+      POSTGRES_DB: fitform
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U fitform -d fitform]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory-policy noeviction
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      retries: 20
+
+  migrate:
+    <<: *backend
+    restart: "no"
+    command: alembic upgrade head
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    <<: *backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips=*
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    <<: *backend
+    command: celery -A app.workers.celery_app.celery_app worker --loglevel=INFO --concurrency=1
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      FITFORM_DOMAIN: ${FITFORM_DOMAIN:?Set FITFORM_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres:
+  redis:
+  videos:
+  caddy-data:
+  caddy-config:

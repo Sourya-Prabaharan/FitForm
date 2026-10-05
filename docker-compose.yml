@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: fitform
       POSTGRES_DB: fitform
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -17,14 +17,27 @@ services:
 
   redis:
     image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory-policy noeviction
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+
+  mailpit:
+    image: axllent/mailpit:v1.29
+    ports:
+      - "127.0.0.1:8025:8025"
 
   api:
+    user: "0:0"
     build:
       context: ./backend
+      args:
+        INSTALL_DEV: "true"
     env_file:
       - ./backend/.env
+    environment:
+      SMTP_HOST: mailpit
     ports:
       - "8000:8000"
     volumes:
@@ -39,8 +52,11 @@ services:
     command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
   worker:
+    user: "0:0"
     build:
       context: ./backend
+      args:
+        INSTALL_DEV: "true"
     env_file:
       - ./backend/.env
     volumes:
@@ -55,5 +71,6 @@ services:
     command: celery -A app.workers.celery_app.celery_app worker --loglevel=INFO
 
 volumes:
+  redis-data:
   postgres-data:
   fitform-videos:

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Mistake(BaseModel):
@@ -70,6 +70,7 @@ class SetAnalysis(BaseModel):
 
 
 class AnalysisComputation(BaseModel):
+    pose_frames: list[dict] = Field(default_factory=list)
     score: int
     confidence: float
     rep_count: int

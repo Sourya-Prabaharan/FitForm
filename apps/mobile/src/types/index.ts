@@ -75,6 +75,8 @@ export type SetAnalysis = {
 };
 
 export type AnalysisResult = {
+  error?: string | null;
+  poseFrames?: Array<{ timestampMs: number; landmarks: Record<string, { x: number; y: number; visibility: number }> }>;
   id: string;
   exercise: ExerciseType;
   status: "queued" | "processing" | "completed" | "failed";

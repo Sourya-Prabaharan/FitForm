@@ -2,6 +2,13 @@
 
 # Local environment
 .env
+.env.*
+!.env.*.example
+!.env.example
+.venv/
+dist/
+apps/mobile/ios/
+apps/mobile/android/
 backend/.env
 apps/mobile/.env
 
@@ -24,6 +31,8 @@ validation-videos/**/*.mov
 validation-videos/**/*.m4v
 validation-videos/**/*.avi
 validation-videos/**/*.webm
+validation-videos/**/*.jpg
+validation-videos/release-*.json
 validation-videos/kinetics_700_train.csv
 validation-videos/calibration-report.json
 validation-videos/downloaded_manifest.json

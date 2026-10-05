@@ -21,13 +21,15 @@ def frame(knee_y: float, knee_x_scale: float = 1.0, hip_x: float = 0.5) -> dict[
 
 
 def squat_rep(knee_x_scale: float = 1.0, hip_offset: float = 0) -> list[dict[str, Point]]:
-    return [
+    keyframes = [
         frame(0.55, knee_x_scale, 0.5 + hip_offset),
         frame(0.64, knee_x_scale, 0.5 + hip_offset),
         frame(0.73, knee_x_scale, 0.5 + hip_offset),
         frame(0.64, knee_x_scale, 0.5 + hip_offset),
         frame(0.55, knee_x_scale, 0.5 + hip_offset),
     ]
+    # A full rep lasts over a second, rather than five frames blurred by smoothing.
+    return [pose for pose in keyframes for _ in range(10)]
 
 
 def test_set_quality_returns_rep_scores() -> None:

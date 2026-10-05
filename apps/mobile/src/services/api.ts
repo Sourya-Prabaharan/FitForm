@@ -1,47 +1,69 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { readSession, replaceSession } from "./session";
 import { AnalysisResult, AuthTokens, ExerciseType, User } from "@/types";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
-type ApiError = { detail?: string };
+type ApiError = { detail?: string | Array<{ msg: string }> };
+let refreshPromise: Promise<string | null> | null = null;
 
 async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = await AsyncStorage.getItem("fitform.refreshToken");
+  const refreshToken = (await readSession())?.refreshToken;
   if (!refreshToken) return null;
-  const response = await fetch(`${API_URL}/auth/refresh`, {
-    method: "POST",
-    headers: { Accept: "application/json", "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken })
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/auth/refresh`, {
+      method: "POST",
+      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
   if (!response.ok) return null;
   const tokens = (await response.json()) as AuthTokens;
-  await AsyncStorage.multiSet([
-    ["fitform.accessToken", tokens.accessToken],
-    ["fitform.refreshToken", tokens.refreshToken]
-  ]);
-  return tokens.accessToken;
+  return await replaceSession(refreshToken, tokens) ? tokens.accessToken : null;
 }
 
 async function request<T>(path: string, init: RequestInit = {}, didRefresh = false): Promise<T> {
-  const token = await AsyncStorage.getItem("fitform.accessToken");
+  const token = (await readSession())?.accessToken;
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
   if (!(init.body instanceof FormData)) headers.set("Content-Type", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const response = await fetch(`${API_URL}${path}`, { ...init, headers });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), init.body instanceof FormData ? 180000 : 30000);
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, { ...init, headers, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
   if (response.status === 401 && !didRefresh && !path.startsWith("/auth/")) {
-    const refreshedToken = await refreshAccessToken();
+    refreshPromise ??= refreshAccessToken().finally(() => { refreshPromise = null; });
+    const refreshedToken = await refreshPromise;
     if (refreshedToken) return request<T>(path, init, true);
   }
   if (!response.ok) {
     const body = (await response.json().catch(() => ({}))) as ApiError;
-    throw new Error(body.detail ?? `Request failed with ${response.status}`);
+    const message = Array.isArray(body.detail) ? body.detail.map((item) => item.msg).join(". ") : body.detail;
+    throw new Error(message ?? `Request failed with ${response.status}`);
   }
   return (await response.json()) as T;
 }
 
 export const api = {
+  async resetPassword(email: string, code: string, password: string) {
+    return request<{ ok: boolean }>("/auth/reset-password", {
+      method: "POST", body: JSON.stringify({ email, code, password })
+    });
+  },
+  async deleteAccount() {
+    return request<{ ok: boolean }>("/users/me", { method: "DELETE" });
+  },
   async signUp(payload: { email: string; password: string; fullName: string }) {
     return request<{ user: User; tokens: AuthTokens }>("/auth/signup", {
       method: "POST",

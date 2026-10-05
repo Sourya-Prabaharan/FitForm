@@ -48,3 +48,7 @@ Submit to TestFlight after replacing placeholders in:
 - `backend/.env.production.example`
 
 Submit to public App Review only after the TestFlight device test plan passes and the production backend is live over HTTPS.
+# Current status
+
+The current verification report is [RELEASE_VERIFICATION.md](RELEASE_VERIFICATION.md).
+The older checklist below is historical and does not establish release readiness.
