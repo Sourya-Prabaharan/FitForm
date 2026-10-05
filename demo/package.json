@@ -1,0 +1,11 @@
+{
+  "name": "fitform-demo",
+  "version": "1.0.0",
+  "description": "FitForm - AI-Powered Biomechanical Movement Analysis Interactive Recruiter Demo",
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "deploy": "vercel --prod"
+  },
+  "author": "Sourya Prabaharan",
+  "license": "MIT"
+}

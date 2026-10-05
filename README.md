@@ -2,6 +2,32 @@
 
 FitForm is a production-style iOS-ready mobile app for AI-powered workout form analysis. Users create an account, upload or record videos for squat, deadlift, and bench press, then receive pose-based scoring, joint angle tracking, movement path visualization, detected mistakes, and improvement cues.
 
+## 🌐 Live Interactive Recruiter Demo
+
+FitForm includes a self-contained, recruiter-ready interactive web showcase in [`demo/`](file:///Users/sourya/Projects/FitForm/demo/index.html):
+
+- **Interactive iPhone 16 Pro Simulator**: Test the complete mobile user journey (Dashboard, Capture, Multi-stage Processing animation, Results with interactive video + pose mesh overlay, Rep Quality cards, and Fault diagnostics).
+- **Kinematics Lab Workbench**: Dual-screen side-by-side HD video player with synchronized MediaPipe 33-point skeletal overlay, real-time telemetry HUD (Knee/Hip angles, Asymmetry, Valgus ratio), and interactive waveform chart with scrub-to-seek.
+- **Pre-loaded Benchmarks**: Immediate testing on MMFit (Squat) and GenAI-MVS (Deadlift & Bench Press) datasets + drag-and-drop custom video upload.
+- **Candidate Portfolio Integration**: Built specifically for linking on resumes, featuring candidate background, GitHub repo, architecture flowcharts, and peer-reviewed research citations.
+- **Zero Backend Dependencies**: Instant loading on Vercel, Netlify, or local preview.
+
+### Run Demo Locally:
+```bash
+# Using Python
+python3 -m http.server 3000 --directory demo
+
+# Or using npx
+npx serve demo -l 3000
+```
+
+### Deploy to Vercel:
+```bash
+cd demo
+vercel --prod
+```
+
+
 ## Architecture
 
 - `apps/mobile`: Expo React Native app written in TypeScript with React Navigation, Zustand, NativeWind, Vision Camera, and Reanimated.

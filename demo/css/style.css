@@ -1,0 +1,1547 @@
+/* ==========================================================================
+   FitForm — Premium AI Workout Kinematics Demo
+   Design System & Styling
+   ========================================================================== */
+
+:root {
+  --bg-darkest: #050907;
+  --bg-primary: #080E0B;
+  --bg-secondary: #0F1A15;
+  --bg-panel: #13221B;
+  --bg-panel-hover: #192D24;
+  --bg-glass: rgba(19, 34, 27, 0.78);
+  --bg-glass-card: rgba(15, 26, 21, 0.85);
+
+  --border-subtle: #1D332B;
+  --border-medium: #27483C;
+  --border-bright: #3D6A59;
+  --border-glow: rgba(52, 211, 153, 0.35);
+
+  --mint: #10B981;
+  --emerald: #34D399;
+  --neon-mint: #00F5A0;
+  --mint-glow: rgba(16, 185, 129, 0.25);
+  --gold: #F59E0B;
+  --coral: #EF4444;
+  --coral-glow: rgba(239, 68, 68, 0.25);
+  --cyan: #06B6D4;
+  --purple: #8B5CF6;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #64748B;
+  --text-subtle: #475569;
+
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px -8px rgba(0, 0, 0, 0.65);
+  --shadow-glow: 0 0 25px rgba(16, 185, 129, 0.2);
+}
+
+/* Base Resets */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-darkest);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.15), transparent),
+    radial-gradient(circle 1000px at 90% 40%, rgba(6, 182, 212, 0.05), transparent),
+    radial-gradient(circle 800px at 10% 80%, rgba(16, 185, 129, 0.04), transparent);
+}
+
+/* Utility Containers */
+.container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-card {
+  background: var(--bg-glass-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+}
+
+.glass-card:hover {
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Typography Helpers */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #FFFFFF 20%, #34D399 75%, #00F5A0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-mint { color: var(--emerald); }
+.text-gold { color: var(--gold); }
+.text-coral { color: var(--coral); }
+.text-cyan { color: var(--cyan); }
+.text-muted { color: var(--text-muted); }
+
+/* ==========================================================================
+   Header & Navigation
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(5, 9, 7, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  height: 72px;
+  display: flex;
+  align-items: center;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.brand-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #10B981, #059669);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px var(--mint-glow);
+}
+
+.brand-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--emerald);
+  color: var(--emerald);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--emerald);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #04120C;
+  font-weight: 800;
+  box-shadow: 0 4px 14px var(--mint-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-outline {
+  background: rgba(19, 34, 27, 0.6);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+}
+
+.btn-outline:hover {
+  background: var(--bg-panel);
+  border-color: var(--emerald);
+  color: white;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
+.hero-section {
+  padding: 64px 0 48px;
+  position: relative;
+  text-align: center;
+}
+
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: var(--emerald);
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.hero-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-mint);
+  box-shadow: 0 0 10px var(--neon-mint);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.hero-headline {
+  font-size: clamp(34px, 5vw, 58px);
+  font-weight: 900;
+  line-height: 1.12;
+  margin-bottom: 20px;
+  letter-spacing: -0.04em;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-subhead {
+  font-size: clamp(16px, 2vw, 19px);
+  color: var(--text-secondary);
+  max-width: 780px;
+  margin: 0 auto 36px;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+/* Telemetry Metric Ribbon */
+.metrics-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 1060px;
+  margin: 0 auto 48px;
+}
+
+.metric-ribbon-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-normal);
+}
+
+.metric-ribbon-card:hover {
+  border-color: var(--border-medium);
+}
+
+.metric-ribbon-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--emerald);
+}
+
+.metric-val {
+  font-size: 28px;
+  font-weight: 900;
+  color: white;
+  line-height: 1.1;
+  font-feature-settings: "tnum";
+}
+
+.metric-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.metric-sub {
+  font-size: 11px;
+  color: var(--emerald);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   Mode Switcher Bar (App Simulator vs Kinematics Lab)
+   ========================================================================== */
+.view-mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.mode-switcher {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: var(--radius-xl);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-sm);
+  gap: 4px;
+}
+
+.mode-btn {
+  padding: 10px 22px;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+.mode-btn.active {
+  background: var(--bg-panel);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-medium);
+}
+
+.mode-btn.active svg {
+  color: var(--emerald);
+}
+
+/* Exercise Quick Selector Pill Strip */
+.exercise-pill-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.ex-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.ex-pill:hover {
+  border-color: var(--border-medium);
+  color: white;
+}
+
+.ex-pill.active {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: var(--emerald);
+  color: var(--emerald);
+  box-shadow: 0 0 16px var(--mint-glow);
+}
+
+.ex-pill-score {
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.score-mint { background: rgba(16, 185, 129, 0.2); color: var(--emerald); }
+.score-gold { background: rgba(245, 158, 11, 0.2); color: var(--gold); }
+.score-coral { background: rgba(239, 68, 68, 0.2); color: var(--coral); }
+
+/* ==========================================================================
+   VIEW 1: Interactive Mobile App Simulator
+   ========================================================================== */
+.simulator-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.simulator-layout {
+  display: grid;
+  grid-template-columns: 410px 1fr;
+  gap: 40px;
+  align-items: start;
+  width: 100%;
+  max-width: 1240px;
+}
+
+/* Photorealistic iPhone 16 Pro Frame */
+.iphone-frame {
+  width: 395px;
+  height: 800px;
+  background: #000000;
+  border-radius: 54px;
+  position: relative;
+  box-shadow: 
+    0 0 0 4px #262927,
+    0 0 0 6px #121513,
+    0 0 0 8px #2b302c,
+    0 25px 60px -10px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(16, 185, 129, 0.12);
+  padding: 14px;
+  margin: 0 auto;
+  user-select: none;
+}
+
+.iphone-screen {
+  width: 100%;
+  height: 100%;
+  background: #080E0B;
+  border-radius: 42px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dynamic Island */
+.dynamic-island {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 115px;
+  height: 30px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dynamic-island-camera {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #111;
+  border: 1px solid #1c2e24;
+}
+
+.dynamic-island-sensor {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #09120e;
+}
+
+/* iOS Status Bar */
+.ios-status-bar {
+  height: 48px;
+  padding: 12px 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  z-index: 400;
+}
+
+.status-time {
+  font-feature-settings: "tnum";
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Screen Content Area */
+.ios-app-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 18px 24px;
+  scrollbar-width: none;
+}
+
+.ios-app-body::-webkit-scrollbar {
+  display: none;
+}
+
+/* iOS Bottom Nav Bar */
+.ios-tab-bar {
+  height: 72px;
+  background: rgba(13, 22, 18, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-bottom: 12px;
+  z-index: 400;
+}
+
+.ios-tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.ios-tab-item.active {
+  color: var(--emerald);
+}
+
+.ios-tab-item svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Home Indicator */
+.ios-home-bar {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  z-index: 500;
+}
+
+/* Simulator Companion Panel */
+.simulator-companion {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.companion-card {
+  padding: 24px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+/* FitScore Circular Dial Component */
+.fitscore-gauge-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 16px 0;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.gauge-svg-wrapper {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+}
+
+.gauge-svg {
+  transform: rotate(-90deg);
+  width: 84px;
+  height: 84px;
+}
+
+.gauge-bg-circle {
+  fill: none;
+  stroke: #162B22;
+  stroke-width: 8;
+}
+
+.gauge-fill-circle {
+  fill: none;
+  stroke: var(--emerald);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 226;
+  stroke-dashoffset: 60;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s;
+}
+
+.gauge-number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+}
+
+/* In-App Video Player Component */
+.inapp-video-container {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border-subtle);
+  margin-top: 14px;
+}
+
+.inapp-video-elem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.inapp-canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.inapp-video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.video-ctrl-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.video-ctrl-btn:hover {
+  background: var(--emerald);
+  color: #000;
+}
+
+.overlay-toggle-pill {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid var(--emerald);
+  color: var(--emerald);
+  cursor: pointer;
+}
+
+/* Reps & Mistakes List in In-App */
+.inapp-metric-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.inapp-metric-chip {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.inapp-metric-chip-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+}
+
+.inapp-metric-chip-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 5 Pillars Breakdown */
+.pillar-row {
+  margin-bottom: 10px;
+}
+
+.pillar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pillar-bar-bg {
+  height: 6px;
+  background: #142820;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.pillar-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--emerald);
+  transition: width 0.6s ease;
+}
+
+/* Rep Cards */
+.rep-quality-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.rep-quality-card:hover {
+  border-color: var(--emerald);
+}
+
+.rep-quality-card.active-rep {
+  border-color: var(--emerald);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+/* Mistake Cards */
+.fault-card {
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+}
+
+.fault-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--coral);
+  margin-bottom: 6px;
+}
+
+.fault-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.fault-evidence {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   VIEW 2: Kinematics Lab Workbench (Full Width Dual View)
+   ========================================================================== */
+.lab-view {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Video Stage Area */
+.lab-video-stage {
+  background: #000;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+.lab-video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.lab-video-elem {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.lab-canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Live Telemetry HUD over Video */
+.lab-hud-overlay {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.hud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(8, 14, 11, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-medium);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+}
+
+.hud-live-tag {
+  color: var(--neon-mint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--neon-mint);
+  animation: pulse-dot 1.5s infinite;
+}
+
+/* Lab Video Controls Toolbar */
+.lab-toolbar {
+  padding: 16px 20px;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lab-scrub-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lab-timecode {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 90px;
+}
+
+.custom-scrubber {
+  flex: 1;
+  height: 8px;
+  background: #142820;
+  border-radius: var(--radius-full);
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.scrubber-fill {
+  height: 100%;
+  background: var(--emerald);
+  border-radius: var(--radius-full);
+  width: 0%;
+  position: relative;
+}
+
+.scrubber-handle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  transform: translateY(-50%);
+  transition: transform var(--transition-fast);
+}
+
+.custom-scrubber:hover .scrubber-handle {
+  transform: translateY(-50%) scale(1.2);
+}
+
+.lab-buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ctrl-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speed-selector {
+  display: inline-flex;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.speed-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.speed-btn.active {
+  background: var(--bg-panel);
+  color: white;
+}
+
+.toggle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.toggle-chip.active {
+  border-color: var(--emerald);
+  color: var(--emerald);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* Lab Right Side Telemetry & Charts */
+.lab-telemetry-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Telemetry Dials Grid */
+.telemetry-dials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.telemetry-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  position: relative;
+}
+
+.telemetry-card-val {
+  font-size: 26px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: white;
+}
+
+.telemetry-card-unit {
+  font-size: 14px;
+  color: var(--emerald);
+  margin-left: 2px;
+}
+
+.telemetry-card-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+
+/* Waveform Chart Container */
+.waveform-chart-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  position: relative;
+}
+
+.waveform-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+#waveformCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Fatigue Degradation Card */
+.fatigue-card {
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+}
+
+.fatigue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.fatigue-stat {
+  padding: 10px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+/* ==========================================================================
+   Architecture & Technical Specifications Section
+   ========================================================================== */
+.architecture-section {
+  padding: 72px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.section-head {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 48px;
+}
+
+.section-tag {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--emerald);
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 900;
+  margin-bottom: 14px;
+}
+
+.section-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* System Pipeline Diagram */
+.pipeline-flow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.pipeline-step {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.pipeline-step:hover {
+  border-color: var(--emerald);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px -10px var(--mint-glow);
+}
+
+.step-number {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--emerald);
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.step-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.step-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.step-tech-tag {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--cyan);
+  margin-top: 10px;
+  display: block;
+}
+
+/* Research & Mathematical Foundations */
+.math-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+.math-card {
+  padding: 22px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.math-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.code-block {
+  background: #050907;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #34D399;
+  margin: 12px 0;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+/* Citations Cards */
+.citations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.citation-card {
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all var(--transition-fast);
+}
+
+.citation-card:hover {
+  border-color: var(--emerald);
+  transform: translateY(-2px);
+}
+
+.citation-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.citation-source {
+  font-size: 11px;
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Candidate Profile & Resume Footer Section
+   ========================================================================== */
+.resume-section {
+  padding: 64px 0 80px;
+  background: linear-gradient(to top, rgba(16, 185, 129, 0.06), transparent 70%);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.profile-card {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 36px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.avatar-box {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10B981, #06B6D4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: 900;
+  color: #04120C;
+  flex-shrink: 0;
+  box-shadow: 0 0 25px var(--mint-glow);
+}
+
+.profile-content {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.profile-role {
+  font-size: 15px;
+  color: var(--emerald);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.profile-bio {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Site Footer */
+.site-footer {
+  padding: 32px 0;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ==========================================================================
+   Toast & Modal Notifications
+   ========================================================================== */
+.toast-msg {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--bg-panel);
+  border: 1px solid var(--emerald);
+  color: white;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-msg.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .simulator-layout {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .lab-grid {
+    grid-template-columns: 1fr;
+  }
+  .pipeline-flow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .math-cards-grid, .citations-grid {
+    grid-template-columns: 1fr;
+  }
+  .metrics-ribbon {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+  .profile-actions {
+    justify-content: center;
+  }
+  .telemetry-dials-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pipeline-flow {
+    grid-template-columns: 1fr;
+  }
+}
