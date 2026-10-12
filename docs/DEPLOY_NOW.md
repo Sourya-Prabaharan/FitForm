@@ -4,15 +4,14 @@ Use this order to move from local validation to TestFlight.
 
 ## 1. Put The Repo On GitHub
 
-If you have not already moved the project to `/Users/sourya/Projects/fitform`, run:
+Start from your checkout root:
 
 ```bash
-cd /Users/sourya/Documents/Codex/2026-05-13/build-a-full-production-style-ios
-./scripts/prepare_fitform_repo.sh
-cd /Users/sourya/Projects/fitform
+git clone https://github.com/Sourya-Prabaharan/FitForm.git
+cd FitForm
 ```
 
-Then create a GitHub repository and push the code.
+Review [release verification](RELEASE_VERIFICATION.md) before any deployment.
 
 ## 2. Create Free/Low-Cost Video Storage
 
