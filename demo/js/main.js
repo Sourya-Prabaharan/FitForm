@@ -141,7 +141,7 @@ window.FitFormMain = (function() {
 
   function handleCustomVideoUpload(file) {
     if (!file) return;
-    showToast(`Uploading & processing ${file.name}...`);
+    showToast(`Opening ${file.name} for local playback (template analytics)...`);
     const fileUrl = URL.createObjectURL(file);
 
     // Create dynamic custom exercise definition based on current exercise template
@@ -150,7 +150,7 @@ window.FitFormMain = (function() {
     customEx.id = 'custom_' + Date.now();
     customEx.title = `User Upload (${file.name.slice(0, 16)}...)`;
     customEx.video = fileUrl;
-    customEx.summary = `Custom video successfully ingested. 33-point pose landmarks tracked across ${template.repCount} repetitions with transparent biomechanical validation.`;
+    customEx.summary = `Playback-only preview. Displayed scores, landmarks, and ${template.repCount} repetitions come from the selected exercise template, not this uploaded video.`;
 
     window.FITFORM_DATASET[customEx.id] = customEx;
 

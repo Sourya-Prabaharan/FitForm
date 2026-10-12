@@ -54,7 +54,7 @@ def main() -> None:
         raise SystemExit(
             f"Missing backend dependency: {missing}\n\n"
             "Run this calibration inside the backend Docker container:\n"
-            "  cd /Users/sourya/Documents/Codex/2026-05-13/build-a-full-production-style-ios\n"
+            "  cd FitForm  # your repository checkout\n"
             "  docker compose up --build\n"
             "  docker compose exec api python scripts/calibrate_validation_dataset.py --max-videos 10\n\n"
             "Or install backend dependencies locally from the backend folder:\n"
